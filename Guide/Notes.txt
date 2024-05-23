@@ -1,0 +1,12 @@
+LAUNCH FRONT-END
+node v18.17.0
+npm audit fix, npm i -force,npm install, npm start
+change Home.js > home.js
+
+LAUNCH BACK-END
+npm install, npm start
+
+LAUNCH SERVER
+nodemon server.js, npm run dev(Don't use)
+
+URI=mongodb+srv://danielltecpuh:qDI28iB7FuRxFZYa@wof-bbdd.5zhzs4k.mongodb.net/?retryWrites=true&w=majority&appName=wof-bbdd
