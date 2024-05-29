@@ -1,32 +1,25 @@
 require('dotenv').config()
 
-const express = require('express')
-const mongoose = require('mongoose')
-//const app = express() //express app
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
 const wofDataRoutes = require('./routes/wofDataRoute') //Routes
 
 //express app
 
 const app = express ()
+const PORT = process.env.PORT || 8000;
 
-//middleware
-
-app.use(express.json())
-app.use((req,res, next) => {
-    console.log(req.path, req.method)
-    next()
-})
+app.use(bodyParser.json());
+app.use(wofDataRoutes);
 
 //msg
 app.get('/', (req, res) => {
     res.json({mssg:'Server ON'})
 })
 
-//routes
-app.use('/wofData', wofDataRoutes)
-
 //connect db
-mongoose.connect(process.env.MONGO_URI)
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
     .then(() => {
         //requests
         app.listen(process.env.PORT, () => {
@@ -42,3 +35,16 @@ mongoose.connect(process.env.MONGO_URI)
   //  console.log('Listen port:', process.env.PORT)
 //})
 
+const itemSchema = new mongoose.Schema({
+    name: String,
+    title: String,
+    story: String,
+    type: String,
+    range: String,
+    movementSpeed: String,
+    enchantment: String,
+
+    image: String
+});
+
+const Item = mongoose.model('Item', itemSchema);

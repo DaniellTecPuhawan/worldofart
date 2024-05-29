@@ -113,7 +113,7 @@ a:hover {
     height: auto;
   }
 
-.boxPaint{
+.box{
     background-color: white;
     display: inline-flex; 
     text-align: center;

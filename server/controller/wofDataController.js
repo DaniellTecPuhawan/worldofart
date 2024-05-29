@@ -1,74 +1,47 @@
-const mongoose = require('mongoose')
-const WofData = require('../models/wofDataModel')
+const WofData = require('../models/wofDataModel');
 
-//GET all data
-const getWofDatas = async (req, res) => {
-    const wofDatas = await WofData.find({}).sort({createAt: -1})
-    res.status(200).json(wofDatas)
-}
+exports.getAllWofDatas = async (req, res) => {
+  try {
+    const wofDatas = await WofData.find();
+    res.json(wofDatas);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
-//GET a single data
-const getWofData = async (req, res) => {
-    const { id } = req.params
-    const wofData = await WofData.findById(id)
+exports.createWofData = async (req, res) => {
+  const wofData = new WofData({
+    name: req.body.name,
+    title: req.body.title,
+    story: req.body.story,
+    type: req.body.type,
+    range: req.body.range,
+    movementSpeed: req.body.movementSpeed,
+    Enchantment: req.body.Enchantment
+  });
 
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({error:'No data'})
-    }
+  try {
+    const newWofData = await wofData.save();
+    res.status(201).json(newWofData);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-    if(!wofData){
-        return res.status(400).json({error:"No data"})
-    }
-    res.status(200).json(wofData)
-}
+exports.updateWofData = async (req, res) => {
+  try {
+    const updatedWofData = await WofData.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    res.json(updatedWofData);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
 
-//create a new workout
-const createWofData = async (req, res) => {
-    const {name, title, story, type, range, movementSpeed, Enchantment} = req.body
-    //doc to db
-
-    try{
-        const wofData = await WofData.create({name, title, story, type, range, movementSpeed, Enchantment})
-        res.status(200).json(wofData)
-    }catch(error){
-        res.status(400).json({error: error.message})
-    }
-}
-
-const updateWofData = async (req,res) => {
-    const {id} = req.params
-
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({error:'No data'})
-    }
-    const wofData = await WofData.findOneAndUpdate({_id: id},{
-        ...req.body
-    })
-
-    if(!wofData){
-        return res.status(400).json({error:"No data"})
-    }
-    res.status(200).json(wofData)
-}
-
-const deleteWofData = async (req, res) => {
-    const {id} = req.params
-
-    if(!mongoose.Types.ObjectId.isValid(id)){
-        return res.status(404).json({error:'No data'})
-    }
-    const wofData = await WofData.findOneAndDelete({_id: id})
-
-    if(!wofData){
-        return res.status(400).json({error:"No data"})
-    }
-    res.status(200).json(wofData)
-}
-
-module.exports = {
-    getWofDatas,
-    getWofData,
-    createWofData,
-    updateWofData,
-    deleteWofData
-}
+exports.deleteWofData = async (req, res) => {
+  try {
+    await WofData.findByIdAndDelete(req.params.id);
+    res.status(204).end();
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};

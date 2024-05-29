@@ -1,34 +1,14 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema
+const paintSchema = new mongoose.Schema({
+    name: String,
+    title: String,
+    story: String,
+    type: String,
+    range: String,
+    movementSpeed: String,
+    Enchantment: String,
+    //image: String  // Campo para almacenar la URL de la imagen
+});
 
-const wofDataSchema = new Schema({
-
-    name:{
-        type:String,
-        required: true
-    },title:{
-        type:String,
-        required: true
-    },story:{
-        type:String,
-        required: true
-    },type:{
-        type:String,
-        required: true
-    },
-    range:{
-        type:String,
-        required: true
-    },
-    movementSpeed:{
-        type:String,
-        required: true
-    },
-    Enchantment:{
-        type:String,
-        required: true
-    },
-})
-
-module.exports = mongoose.model('wofData', wofDataSchema)
+module.exports = mongoose.model('wofdata', paintSchema);

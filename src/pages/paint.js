@@ -18,25 +18,25 @@ const Paint = () => {
     }, [])
 
     return(
-        <div>
-        <h1>Data from MongoDB</h1>
-        {wofDatas && wofDatas.map((wofData) => (
-
-          <ul key={wofData.id}>
-            
-            <li>{wofData.name}</li>
-            <li>{wofData.title}</li>
-            <li>{wofData.story}</li>
-            <li>{wofData.type}</li>
-            <li>{wofData.range}</li>
-            <li>{wofData.movementSpeed}</li>
-            <li>{wofData.Enchantment}</li>
-
-          </ul>
-              
-        ))}
-        
-      </div>
+<div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+                {/* Renderizar tarjetas para cada elemento */}
+                {wofDatas &&
+                    wofDatas.map((wofData) => (
+                        <div className="col" key={wofData._id}>
+                            <div className="card h-100">
+                                <div className="card-body">
+                                    <h5 className="card-title">{wofData.name}</h5>
+                                    <p className="card-text">{wofData.title}</p>
+                                    <p className="card-text">{wofData.story}</p>
+                                    <p className="card-text">{wofData.type}</p>
+                                    <p className="card-text">{wofData.range}</p>
+                                    <p className="card-text">{wofData.movementSpeed}</p>
+                                    <p className="card-text">{wofData.Enchantment}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+            </div>
     );
   };
 
