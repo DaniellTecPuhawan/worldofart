@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
+
 const Paint = () => {
     // Estado para almacenar los datos obtenidos de MongoDB
     const [wofDatas, setwofDatas] = useState(null);
@@ -120,28 +123,35 @@ const Paint = () => {
             <form onSubmit={handleSubmit}>
                 <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} />
                 <input type="text" name="title" placeholder="Title" value={formData.title} onChange={handleChange} />
+                {/*
                 <input type="text" name="story" placeholder="Story" value={formData.story} onChange={handleChange} />
                 <input type="text" name="type" placeholder="Type" value={formData.type} onChange={handleChange} />
                 <input type="text" name="range" placeholder="Range" value={formData.range} onChange={handleChange} />
+                
                 <input type="text" name="movementSpeed" placeholder="Movement Speed" value={formData.movementSpeed} onChange={handleChange} />
                 <input type="text" name="Enchantment" placeholder="Enchantment" value={formData.Enchantment} onChange={handleChange} />
-                <button type="submit">{editingItem ? 'Update' : 'Create'}</button>
+                */}
+<button type="submit" className="btn btn-primary">
+    {editingItem ? <span><FontAwesomeIcon icon={faFileUpload} /> Update</span> : <span><FontAwesomeIcon icon={faFileUpload} /></span>}
+</button>
             </form>
             
             <div className="container">
-            <div className="row">
+            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
                 {wofDatas &&
                     wofDatas.map((wofData) => (
-                        <div className="col-sm-6 col-md-4 col-lg-3" key={wofData._id}>
+                        <div className="col" key={wofData._id}>
                             <div className="card mb-3">
                                 <div className="card-body">
-                                    <h5 className="card-title">{wofData.name}</h5>
-                                    <p className="card-text">{wofData.title}</p>
-                                    <p className="card-text">{wofData.story}</p>
-                                    <p className="card-text">{wofData.type}</p>
-                                    <p className="card-text">{wofData.range}</p>
-                                    <p className="card-text">{wofData.movementSpeed}</p>
-                                    <p className="card-text">{wofData.Enchantment}</p>
+                                    <p className="card-text"><p className="bold-text">Name: {wofData.name}</p></p>
+                                    <p className="card-text"><p className="bold-text">Title: {wofData.title}</p></p>
+                                    {/*
+                                    <p className="card-text"><p className="bold-text">Story: : {wofData.story}</p></p>
+                                    <p className="card-text"><p className="bold-text">Type: : {wofData.type}</p></p>
+                                    <p className="card-text"><p className="bold-text">Range: : {wofData.range}</p></p>
+                                    <p className="card-text"><p className="bold-text">Movement: : {wofData.movementSpeed}</p></p>
+                                    <p className="card-text"><p className="bold-text">Enchantment: : {wofData.Enchantment}</p></p>
+                                    */}
                                     {/* Botones para editar y borrar elementos */}
                                     <button className="btn btn-primary" onClick={() => handleEdit(wofData)}>Edit</button>
                                     <button className="btn btn-danger" onClick={() => handleDelete(wofData._id)}>Delete</button>
@@ -151,7 +161,7 @@ const Paint = () => {
                     ))}
             </div>
         </div>
-
+            
         </div> 
     );
 };
