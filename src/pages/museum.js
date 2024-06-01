@@ -32,25 +32,26 @@ function ImageUpload(){
 
 return(
 
-  <div className="container">
-  <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-    <input type="file" onChange={(e)=>setImg(e.target.files[0])}/>
-    <button className="btn btn-primary" onClick={handleClick}>Upload</button>
+<div className="container">
 
+  
+  <input type="file" onChange={(e)=>setImg(e.target.files[0])}/>
+  <button onClick={handleClick}>Upload</button>
+
+  <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+    
     <br/>
    
     {
-      imgUrl.map(dataVal=> <div className="col">
-      <div className="card mb-3">
-          <div className="card-body">
+      imgUrl.map(dataVal=><div>
       <img src={dataVal} height="200px" width="200px" />
       <br/> 
-      </div></div></div>)
+      </div>)
     }
   
   </div>
 
-  </div>
+</div>
 
   )
 }

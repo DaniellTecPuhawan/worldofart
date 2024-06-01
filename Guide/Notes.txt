@@ -10,3 +10,5 @@ LAUNCH SERVER
 nodemon server.js, npm run dev(Don't use)
 
 URI=mongodb+srv://danielltecpuh:qDI28iB7FuRxFZYa@wof-bbdd.5zhzs4k.mongodb.net/?retryWrites=true&w=majority&appName=wof-bbdd
+
+GitHub Auth = git config --local credential.helper ""
