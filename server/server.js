@@ -34,17 +34,3 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 //app.listen(process.env.PORT, () => {
   //  console.log('Listen port:', process.env.PORT)
 //})
-
-const itemSchema = new mongoose.Schema({
-    name: String,
-    title: String,
-    story: String,
-    type: String,
-    range: String,
-    movementSpeed: String,
-    enchantment: String,
-
-    image: String
-});
-
-const Item = mongoose.model('Item', itemSchema);

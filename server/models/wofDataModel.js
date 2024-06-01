@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const paintSchema = new mongoose.Schema({
+const wofDataSchema = new mongoose.Schema({
     name: String,
     title: String,
     story: String,
@@ -8,7 +8,8 @@ const paintSchema = new mongoose.Schema({
     range: String,
     movementSpeed: String,
     Enchantment: String,
-    //image: String  // Campo para almacenar la URL de la imagen
+    imageURL: String
+      // Campo para almacenar la URL de la imagen
 });
 
-module.exports = mongoose.model('wofdata', paintSchema);
+module.exports = mongoose.model('wofdata', wofDataSchema);
