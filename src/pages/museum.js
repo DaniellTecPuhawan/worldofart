@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ImageDb } from '../firebase';
 import { uploadBytes, ref, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
-import { set } from 'firebase/database'; // Importa la función set de Firebase Realtime Database
 import { v4 } from "uuid";
-
+import { Modal, Button } from 'react-bootstrap'; // Importa Modal y Button de React Bootstrap
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faUpload } from '@fortawesome/free-solid-svg-icons';
 import '../css/styles.css';
 
 function ImageUpload(){
@@ -11,66 +12,51 @@ function ImageUpload(){
   const [img, setImg] = useState(null);
   const [imgUrl, setImgUrl] = useState([]);
   const [editingImage, setEditingImage] = useState(null);
-  const [textArray, setTextArray] = useState([]); // Arreglo para almacenar el texto asociado a cada imagen
-  const [editedTextArray, setEditedTextArray] = useState([]); // Arreglo para almacenar el texto editado de cada imagen
-  const [text, setText] = useState(''); // Agrega la variable de estado para el texto
+  const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
+  const [modalImgUrl, setModalImgUrl] = useState(''); // Estado para almacenar la URL de la imagen seleccionada
+  const [showUpdateButton, setShowUpdateButton] = useState(false); // Estado para controlar la visibilidad del botón "Update"
 
   const handleClickUpload = () => {
     if (img !== null) {
       const imgRef = ref(ImageDb, editingImage ? `files/${editingImage.id}` : `files/${v4()}`);
       uploadBytes(imgRef, img).then(() => {
-        setImg(null); // Limpiar el estado de la imagen después de cargar
-        setEditingImage(null); // Limpiar el estado de edición
-        listImages(); // Actualizar la lista de imágenes después de cargar una nueva
-        setTextArray(prevTextArray => [...prevTextArray, text]); // Agregar un nuevo texto al arreglo para la nueva imagen
-        setEditedTextArray(prevEditedTextArray => [...prevEditedTextArray, text]); // Agregar un nuevo texto editado al arreglo
-        setText(''); // Limpiar el campo de entrada de texto después de la carga
+        setImg(null);
+        setEditingImage(null);
+        listImages(); // Llamar a listImages para actualizar la lista después de subir una imagen
       }).catch(error => console.error('Error uploading image:', error));
     }
   };
 
   const listImages = () => {
-    setImgUrl([]); // Limpiar la lista de URLs de imágenes antes de volver a cargar
     listAll(ref(ImageDb, "files")).then(imgs => {
-      imgs.items.forEach(val => {
-        getDownloadURL(val).then(url => {
-          setImgUrl(prevUrls => [...prevUrls, { url, ref: val }]);
-        });
+      const promises = imgs.items.map(val =>
+        getDownloadURL(val).then(url => ({ url, ref: val }))
+      );
+      Promise.all(promises).then(imageUrls => {
+        setImgUrl(imageUrls); // Actualizar la lista de imágenes
       });
     }).catch(error => console.error('Error listing images:', error));
   };
 
   const handleDelete = (ref, index) => {
     deleteObject(ref).then(() => {
-      listImages(); // Actualizar la lista de imágenes después de eliminar una
-      setTextArray(prevTextArray => prevTextArray.filter((_, i) => i !== index)); // Eliminar el texto asociado a la imagen eliminada
-      setEditedTextArray(prevEditedTextArray => prevEditedTextArray.filter((_, i) => i !== index)); // Eliminar el texto editado asociado a la imagen eliminada
+      listImages(); // Llamar a listImages para actualizar la lista después de eliminar una imagen
     }).catch(error => console.error('Error deleting image:', error));
   };
 
-  const handleEdit = (image, index) => {
+  const handleEdit = (image) => {
     setEditingImage(image);
-    // Obtener el texto actual del elemento seleccionado para la edición
-    const text = textArray[index] || '';
-    setEditedTextArray(prevEditedTextArray => {
-      const newArray = [...prevEditedTextArray];
-      newArray[index] = text;
-      return newArray;
-    });
+    setShowUpdateButton(true); // Mostrar el botón "Update" independientemente de la edición
   };
 
-  const handleSaveEdit = (index) => {
-    // Guardar el texto editado en su respectivo lugar en el arreglo de texto
-    setTextArray(prevTextArray => {
-      const newArray = [...prevTextArray];
-      newArray[index] = editedTextArray[index];
-      return newArray;
-    });
-    setEditingImage(null); // Finalizar el modo de edición
+  // Función para mostrar el modal y establecer la URL de la imagen seleccionada
+  const handleShowModal = (imageUrl) => {
+    setModalImgUrl(imageUrl);
+    setShowModal(true);
   };
 
   useEffect(() => {
-    listImages(); // Obtener la lista de imágenes al cargar el componente
+    listImages(); // Llamar a listImages al montar el componente para obtener las imágenes iniciales
   }, []);
 
   return(
@@ -80,14 +66,6 @@ function ImageUpload(){
           <input type="file" onChange={(e) => setImg(e.target.files[0])} />
         </div>
         <div className="col">
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Enter text"
-          />
-        </div>
-        <div className="col">
           <button className="btn btn-info" onClick={handleClickUpload}>{editingImage ? 'Update' : 'Upload'}</button>
         </div>
       </div>
@@ -95,36 +73,24 @@ function ImageUpload(){
         {imgUrl.map((data, index) => (
           <div className="col" key={index}>
             <div className="card">
-              <img src={data.url} className="card-img-top" alt={`image_${index}`} />
+              <img src={data.url} className="card-img-top" alt={`image_${index}`} onClick={() => handleShowModal(data.url)} /> {/* Agrega onClick para mostrar el modal */}
               <div className="card-body">
-                {editingImage && editingImage.id === index ? (
-                  <input
-                    type="text"
-                    value={editedTextArray[index]}
-                    onChange={(e) => {
-                      const newText = e.target.value;
-                      setEditedTextArray(prevEditedTextArray => {
-                        const newArray = [...prevEditedTextArray];
-                        newArray[index] = newText;
-                        return newArray;
-                      });
-                    }}
-                    placeholder="Enter text"
-                  />
-                ) : (
-                  <p className="card-text">{textArray[index]}</p>
-                )}
-                <button className="btn btn-danger" onClick={() => handleDelete(data.ref, index)}>Delete</button> {/* Botón para eliminar */}
-                {editingImage && editingImage.id === index ? (
-                  <button className="btn btn-success" onClick={() => handleSaveEdit(index)}>Save</button>
-                ) : (
-                  <button className="btn btn-primary" onClick={() => handleEdit({ id: index, ref: data.ref }, index)}>Edit</button>
-                )}
+                <button className="btn btn-danger" onClick={() => handleDelete(data.ref, index)}>Delete</button>
+                <button className="btn btn-primary" onClick={() => handleEdit({ id: index, ref: data.ref })}>Edit</button>
               </div>
             </div>
           </div>
         ))}
       </div>
+      {/* Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Body>
+          <img src={modalImgUrl} alt="modal-img" style={{ width: '100%' }} /> {/* Muestra la imagen dentro del modal */}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 }
