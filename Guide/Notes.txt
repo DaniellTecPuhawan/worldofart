@@ -20,3 +20,6 @@ GitHub Auth = git config --local credential.helper ""
       <br/> 
       </div>)
     }
+
+In case of not pulling: 
+git stash push --include-untracked
