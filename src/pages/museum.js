@@ -3,8 +3,7 @@ import { ImageDb } from '../firebase';
 import { uploadBytes, ref, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
 import { v4 } from "uuid";
 import { Modal, Button } from 'react-bootstrap'; // Importa Modal y Button de React Bootstrap
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faUpload } from '@fortawesome/free-solid-svg-icons';
+
 import '../css/styles.css';
 
 function ImageUpload(){
@@ -14,7 +13,6 @@ function ImageUpload(){
   const [editingImage, setEditingImage] = useState(null);
   const [showModal, setShowModal] = useState(false); // Estado para controlar la visibilidad del modal
   const [modalImgUrl, setModalImgUrl] = useState(''); // Estado para almacenar la URL de la imagen seleccionada
-  const [showUpdateButton, setShowUpdateButton] = useState(false); // Estado para controlar la visibilidad del botón "Update"
 
   const handleClickUpload = () => {
     if (img !== null) {
@@ -46,7 +44,6 @@ function ImageUpload(){
 
   const handleEdit = (image) => {
     setEditingImage(image);
-    setShowUpdateButton(true); // Mostrar el botón "Update" independientemente de la edición
   };
 
   // Función para mostrar el modal y establecer la URL de la imagen seleccionada

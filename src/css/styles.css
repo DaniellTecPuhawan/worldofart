@@ -1,10 +1,3 @@
-.card-img-top {
-  height: 350px; /* Altura deseada para las imágenes */
-  width: 200px; /* Ancho deseado para las imágenes */
-  object-fit: cover; /* Escalar la imagen manteniendo la relación de aspecto y cubriendo el espacio asignado */
-}
-
-
 .modal {
   display: block;
   position: fixed;
