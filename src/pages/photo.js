@@ -1,169 +1,178 @@
-import React, { useEffect, useState } from 'react';
-
+import React, { useState, useEffect } from 'react';
+import { ImageDb } from '../firebase';
+import { uploadBytes, ref, listAll, getDownloadURL, deleteObject } from 'firebase/storage';
+import { v4 } from "uuid";
+import { Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
+import { LazyLoadImage } from "react-lazy-load-image-component";
 
-const Paint = () => {
-    // Estado para almacenar los datos obtenidos de MongoDB
-    const [wofDatas, setwofDatas] = useState(null);
+import '../css/styles.css';
 
-    // Estado para almacenar el formulario de entrada
-    const [formData, setFormData] = useState({
-        name: '',
-        title: '',
-        story: '',
-        type: '',
-        range: '',
-        movementSpeed: '',
-        Enchantment: ''
-    });
+function ImageUpload(){
 
-    // Estado para almacenar el elemento que se está editando
-    const [editingItem, setEditingItem] = useState(null);
+  const [img, setImg] = useState(null);
+  const [imgUrl, setImgUrl] = useState([]);
+  const [editingImage, setEditingImage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [modalImgUrl, setModalImgUrl] = useState('');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editImg, setEditImg] = useState(null);
+  const [showFileModal, setShowFileModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingIndex, setDeletingIndex] = useState(null);
+  const [previewImgUrl, setPreviewImgUrl] = useState(null); // Estado para almacenar la URL de la vista previa de la imagen seleccionada para cargar
 
-    // Función para manejar cambios en el formulario de entrada
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+  const handleClickUpload = () => {
+    if (img !== null || editImg !== null) {
+      if (editingImage) {
+        const imgRef = ref(ImageDb, `photographies/${editingImage.id}`);
+        uploadBytes(imgRef, editImg || img).then(() => {
+          setImg(null);
+          setEditingImage(null);
+          setEditImg(null);
+          listImages();
+          setShowModal(false);
+          setShowEditModal(false);
+          setShowFileModal(false);
+          setPreviewImgUrl(null); // Limpiar la vista previa de la imagen al cargar
+        }).catch(error => console.error('Error uploading image:', error));
+      } else {
+        const imgRef = ref(ImageDb, `photographies/${v4()}`);
+        uploadBytes(imgRef, img).then(() => {
+          setImg(null);
+          listImages();
+          setShowModal(false);
+          setShowEditModal(false);
+          setShowFileModal(false);
+          setPreviewImgUrl(null); // Limpiar la vista previa de la imagen al cargar
+        }).catch(error => console.error('Error uploading image:', error));
+      }
+    }
+  };
 
-    // Función para enviar el formulario al backend y crear o actualizar un elemento
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        try {
-            if (editingItem) {
-                // Si hay un elemento en edición, realizamos una solicitud PUT para actualizarlo
-                await fetch(`/wofdata/${editingItem._id}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                // Actualizar el estado para reflejar los cambios
-                setwofDatas(wofDatas.map(item => (item._id === editingItem._id ? formData : item)));
-                // Limpiar el formulario y el estado de edición
-                setFormData({
-                    name: '',
-                    title: '',
-                    story: '',
-                    type: '',
-                    range: '',
-                    movementSpeed: '',
-                    Enchantment: ''
-                });
-                setEditingItem(null);
-            } else {
-                // Si no hay un elemento en edición, realizamos una solicitud POST para crear uno nuevo
-                const response = await fetch('/wofdata', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(formData)
-                });
-                const data = await response.json();
-                // Actualizar el estado con el nuevo elemento
-                setwofDatas([...wofDatas, data]);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+  const listImages = () => {
+    listAll(ref(ImageDb, "photographies")).then(imgs => {
+      const promises = imgs.items.map(val =>
+        getDownloadURL(val).then(url => ({ url, ref: val }))
+      );
+      Promise.all(promises).then(imageUrls => {
+        setImgUrl(imageUrls);
+      });
+    }).catch(error => console.error('Error listing images:', error));
+  };
 
-    // Función para manejar la eliminación de un elemento
-    const handleDelete = async (id) => {
-        try {
-            await fetch(`/wofdata/${id}`, {
-                method: 'DELETE'
-            });
-            // Filtrar los datos para eliminar el elemento eliminado
-            setwofDatas(wofDatas.filter(item => item._id !== id));
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+  const handleDelete = () => {
+    const index = deletingIndex;
+    const refToDelete = imgUrl[index].ref;
+    deleteObject(refToDelete).then(() => {
+      listImages();
+      setShowDeleteModal(false);
+    }).catch(error => console.error('Error deleting image:', error));
+  };
 
-    // Función para manejar la edición de un elemento
-    const handleEdit = (item) => {
-        // Rellenar el formulario con los detalles del elemento que se está editando
-        setFormData({
-            name: item.name,
-            title: item.title,
-            story: item.story,
-            type: item.type,
-            range: item.range,
-            movementSpeed: item.movementSpeed,
-            Enchantment: item.Enchantment
-        });
-        // Actualizar el estado de edición con el elemento seleccionado
-        setEditingItem(item);
-    };
+  const handleEdit = (image) => {
+    setEditingImage(image);
+    setShowEditModal(true);
+  };
 
-    // Función para obtener todos los elementos de MongoDB al cargar la página
-    useEffect(() => {
-        const fetchwofDatas = async () => {
-            const response = await fetch('/wofdata');
-            const json = await response.json();
+  const handleShowModal = (imageUrl, index) => {
+    setModalImgUrl(imageUrl);
+    setShowModal(true);
+    setDeletingIndex(index);
+  };
 
-            if(response.ok){
-                setwofDatas(json);
-            }  
-        }
-        fetchwofDatas(); 
-    }, []);
+  // Función para manejar el cambio en el input de tipo file y mostrar la vista previa de la imagen
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setImg(file); // Almacena el archivo seleccionado en el estado
+    setPreviewImgUrl(URL.createObjectURL(file)); // Crea y almacena la URL de la vista previa de la imagen
+  };
 
-    return( 
+  useEffect(() => {
+    listImages();
+  }, []);
 
-        <div> 
-            <h1>Data from MongoDB</h1> 
-            {/* Formulario para crear o editar un elemento */}
-            <form onSubmit={handleSubmit}>
-                <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} />
-                <input type="text" name="title" placeholder="Title" value={formData.title} onChange={handleChange} />
-                {/*
-                <input type="text" name="story" placeholder="Story" value={formData.story} onChange={handleChange} />
-                <input type="text" name="type" placeholder="Type" value={formData.type} onChange={handleChange} />
-                <input type="text" name="range" placeholder="Range" value={formData.range} onChange={handleChange} />
-                
-                <input type="text" name="movementSpeed" placeholder="Movement Speed" value={formData.movementSpeed} onChange={handleChange} />
-                <input type="text" name="Enchantment" placeholder="Enchantment" value={formData.Enchantment} onChange={handleChange} />
-                */}
-<button type="submit" className="btn btn-primary">
-    {editingItem ? <span><FontAwesomeIcon icon={faFileUpload} /> Update</span> : <span><FontAwesomeIcon icon={faFileUpload} /></span>}
-</button>
-            </form>
-            
-            <div className="container">
-            <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
-                {wofDatas &&
-                    wofDatas.map((wofData) => (
-                        <div className="col" key={wofData._id}>
-                            <div className="card mb-3">
-                                <div className="card-body">
-                                    <p className="card-text"><p className="bold-text">Name: {wofData.name}</p></p>
-                                    <p className="card-text"><p className="bold-text">Title: {wofData.title}</p></p>
-                                    {/*
-                                    <p className="card-text"><p className="bold-text">Story: : {wofData.story}</p></p>
-                                    <p className="card-text"><p className="bold-text">Type: : {wofData.type}</p></p>
-                                    <p className="card-text"><p className="bold-text">Range: : {wofData.range}</p></p>
-                                    <p className="card-text"><p className="bold-text">Movement: : {wofData.movementSpeed}</p></p>
-                                    <p className="card-text"><p className="bold-text">Enchantment: : {wofData.Enchantment}</p></p>
-                                    */}
-                                    {/* Botones para editar y borrar elementos */}
-                                    <button className="btn btn-primary" onClick={() => handleEdit(wofData)}>Edit</button>
-                                    <button className="btn btn-danger" onClick={() => handleDelete(wofData._id)}>Delete</button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-            </div>
+  const handleShowFileModal = () => {
+    // Limpiar el estado de la vista previa de la imagen al abrir el modal de selección de archivos
+    setPreviewImgUrl(null);
+    setShowFileModal(true);
+  };
+
+  return(
+    
+    <div className="container">
+      <div className="row bottomright">
+        <div className="col">
+          {/* Botón de carga de archivo */}
+          <Button onClick={handleShowFileModal}>
+            <FontAwesomeIcon icon={faFileUpload} />
+          </Button>
         </div>
-            
-        </div> 
-    );
-};
+      </div>
+      <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
+        {imgUrl.map((data, index) => (
+          <div className="col" key={index}>
+            <div className="card">
+            <br/>
+              <img src={data.url} className="card-img-top img-fluid" loading="lazy" alt={`image_${index}`} onClick={() => handleShowModal(data.url, index)} style={{height: '200px'}} />
+              <div className="card-body d-flex justify-content-center align-items-center">
+                <div>
+                  <button className="btn btn-danger me-2" onClick={() => {setDeletingIndex(index); setShowDeleteModal(true);}}>Delete</button>
+                  <button className="btn btn-primary" onClick={() => handleEdit({ id: index, ref: data.ref })}>Edit</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+      {/* Modal de zoom */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Body>
+          <img src={modalImgUrl} className="card-img-top modal-img img-fluid" alt="modal-img" />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Modal de edición */}
+      <Modal show={showEditModal} onHide={() => setShowEditModal(false)} centered>
+        <Modal.Body>
+          {/* Vista previa de la imagen seleccionada para editar */}
+          {previewImgUrl && <img src={previewImgUrl} alt="Preview" className="img-fluid" />}
+          {/* Botón de carga de archivo dentro del modal de edición */}
+          <input type="file" onChange={handleFileChange} />
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-info" onClick={handleClickUpload}>{editingImage ? 'Update' : 'Upload'}</button>
+          <Button variant="secondary" onClick={() => setShowEditModal(false)}>Close</Button>
+        </Modal.Footer>
+      </Modal>
+      {/* Modal de selección de archivo */}
+      <Modal show={showFileModal} onHide={() => setShowFileModal(false)} centered>
+        <Modal.Body>
+          {/* Vista previa de la imagen seleccionada */}
+          {previewImgUrl && <img src={previewImgUrl} alt="Preview" className="img-fluid" />}
+          {/* Botón de carga de archivo dentro del modal de selección de archivo */}
+          <input type="file" onChange={handleFileChange} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowFileModal(false)}>Close</Button>
+          <button className="btn btn-info" onClick={handleClickUpload}>{editingImage ? 'Update' : 'Upload'}</button>
+        </Modal.Footer>
+      </Modal>
+      {/* Modal de confirmación de eliminación */}
+      <Modal show={showDeleteModal} onHide={() => setShowDeleteModal(false)} centered>
+        <Modal.Body>
+          <p>Are you sure you want to delete this image?</p>
+        </Modal.Body>
+        <Modal.Footer>
+          <button className="btn btn-danger" onClick={handleDelete}>Confirm</button>
+          <Button variant="secondary" onClick={() => setShowDeleteModal(false)}>Cancel</Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+}
 
-export default Paint;
+export default ImageUpload;

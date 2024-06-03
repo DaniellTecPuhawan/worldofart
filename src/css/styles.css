@@ -51,8 +51,14 @@
 }
 
 
-
 .modal-img {
   display: block;
   margin: 0 auto; /* Esto centra horizontalmente la imagen */
+}
+
+.bottomright {
+  position: absolute;
+  bottom: 8px;
+  right: 16px;
+  font-size: 18px;
 }

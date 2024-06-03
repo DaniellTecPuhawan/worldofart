@@ -24,7 +24,7 @@ function ImageUpload(){
   const handleClickUpload = () => {
     if (img !== null || editImg !== null) {
       if (editingImage) {
-        const imgRef = ref(ImageDb, `files/${editingImage.id}`);
+        const imgRef = ref(ImageDb, `paintings/${editingImage.id}`);
         uploadBytes(imgRef, editImg || img).then(() => {
           setImg(null);
           setEditingImage(null);
@@ -36,7 +36,7 @@ function ImageUpload(){
           setPreviewImgUrl(null); // Limpiar la vista previa de la imagen al cargar
         }).catch(error => console.error('Error uploading image:', error));
       } else {
-        const imgRef = ref(ImageDb, `files/${v4()}`);
+        const imgRef = ref(ImageDb, `paintings/${v4()}`);
         uploadBytes(imgRef, img).then(() => {
           setImg(null);
           listImages();
@@ -50,7 +50,7 @@ function ImageUpload(){
   };
 
   const listImages = () => {
-    listAll(ref(ImageDb, "files")).then(imgs => {
+    listAll(ref(ImageDb, "paintings")).then(imgs => {
       const promises = imgs.items.map(val =>
         getDownloadURL(val).then(url => ({ url, ref: val }))
       );
@@ -99,7 +99,7 @@ function ImageUpload(){
 
   return(
     <div className="container">
-      <div className="row">
+      <div className="row bottomright">
         <div className="col">
           {/* Botón de carga de archivo */}
           <Button onClick={handleShowFileModal}>
@@ -111,7 +111,7 @@ function ImageUpload(){
         {imgUrl.map((data, index) => (
           <div className="col" key={index}>
             <div className="card">
-              <img src={data.url} className="card-img-top img-fluid" alt={`image_${index}`} onClick={() => handleShowModal(data.url, index)} />
+              <img src={data.url} className="card-img-top img-fluid img-lazy" alt={`image_${index}`} onClick={() => handleShowModal(data.url, index)} style={{height: '200px'}} />
               <div className="card-body d-flex justify-content-center align-items-center">
                 <div>
                   <button className="btn btn-danger me-2" onClick={() => {setDeletingIndex(index); setShowDeleteModal(true);}}>Delete</button>
@@ -125,9 +125,10 @@ function ImageUpload(){
       {/* Modal de zoom */}
       <Modal show={showModal} onHide={() => setShowModal(false)} centered>
         <Modal.Body>
-          <img src={modalImgUrl} className="modal-img img-fluid" alt="modal-img" />
+          <img src={modalImgUrl} className="card-img-top modal-img img-fluid" alt="modal-img" />
         </Modal.Body>
         <Modal.Footer>
+            
           <Button variant="secondary" onClick={() => setShowModal(false)}>Close</Button>
         </Modal.Footer>
       </Modal>
@@ -137,6 +138,7 @@ function ImageUpload(){
           {/* Vista previa de la imagen seleccionada para editar */}
           {previewImgUrl && <img src={previewImgUrl} alt="Preview" className="img-fluid" />}
           {/* Botón de carga de archivo dentro del modal de edición */}
+          
           <input type="file" onChange={handleFileChange} />
         </Modal.Body>
         <Modal.Footer>
