@@ -2,7 +2,7 @@ require('dotenv').config()
 
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
+//const bodyParser = require('body-parser');
 const wofDataRoutes = require('./routes/wofDataRoute') //Routes
 
 //express app

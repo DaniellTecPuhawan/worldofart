@@ -1,0 +1,35 @@
+Create
+insertOne({})
+insertMany([{}, {}, {}])
+
+Read
+db.{database}.find()
+db.{database}.find().pretty()
+findOne({value, options})
+db.database.findOne({name: "test"})
+
+toArray, print as array
+db.database.find().toArray()
+
+forEach, print as jsondb.
+db.smashLegends.find().forEach((smashData) => {printjson(smashData)})
+
+smashLegends> db.smashLegends.find({}, {name:1}).pretty() Shows only the name
+smashLegends> db.smashLegends.find({}, {_id:0, name:1, Enchantment:1}).pretty() Shows only the name, Enchantment
+
+Update 
+updateOne({value, options})
+db.database.updateOne({name: "test"}, {$set: {type: "testing"}}) Adds new value
+db.smashLegends.updateOne({_id: ObjectId('6666c57dcf56ee871f8093ac')}, {$set: {name: "tested"}})
+db.smashLegends.updateOne({_id: ObjectId('6620d1b834f2161e4d9a8017')}, {$set: {skills: ["hunting", "Hide"]}}) Sets an array
+
+updateMany({value, options}) Ads a value on every data
+db.smashLegends.updateMany({}, {$set: {Ranked:"Yes"}})
+
+replaceOne({value, options}) Replace data
+db.smashLegends.replaceOne({name:"test2"}, {name:"test", state:"to test"})
+
+Delete 
+deleteOne({name: "test"})
+deleteMany{value, options}
+
