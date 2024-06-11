@@ -47,83 +47,62 @@ Retrieving data
 Using filters and operators
 
 
+Document Schemas, Data types
+Don't have to use the same Schema
+Mix structures of schema, schema-less(?)
 
-EXAM
-
-Part1
-
-db.mongoTest.insert(
-
+[
+  {
+  "name": "Master Cat",
+  "title": "Wandering Swordsman in Boots",
+},
 {
-  _id: ObjectId('6667f966360a05cc072162a5'),
-  name: 'Patient 1',
-  age: 31,
-  history: [
-    {
-      disease: 'cold',
-      treatment: 'False'
-    }
-  ]
-}
+  "name": "Wolfgang",
+  "title": "Silent Hunter Sheep Who Mistrusts Others",
+  "Enchantment": "Aggression"
+},
 {
-  _id: ObjectId('6667f979360a05cc072162a6'),
-  name: 'Patient 2',
-  age: 40,
-  history: [
-    {
-      disease: 'fever',
-      treatment: 'True'
-    }
-  ]
-}
-{
-  _id: ObjectId('6667f98a360a05cc072162a7'),
-  name: 'Patient 3',
-  age: 22,
-  history: [
-    {
-      disease: 'headache',
-      treatment: 'True'
-    }
-  ]
-}
-{
-  _id: ObjectId('6667f99c360a05cc072162a8'),
-  name: 'Patient 4',
-  age: 40,
-  history: [
-    {
-      disease: 'cold',
-      treatment: 'True'
-    }
-  ]
-}
-{
-  _id: ObjectId('6667f9b3360a05cc072162a9'),
-  name: 'Patient 5',
-  age: 22,
-  history: [
-    {
-      disease: 'fever',
-      treatment: 'False'
-    }
-  ]
+  "name": "Jack O",
+  "title": "A Con Artist No One Safe From",
+  "Enchantment": "Relentless Lightning"
 }
 
-)
+]
 
-db.mongoTest.find().forEach((patientData => {printjson(patiendData)}))
+Is not necessary the same fields but  it must. It depends of the structure
+Modelling relations
+Schema validation
 
-Part2
+Data types
 
-db.mongoTest.updateOne({name:"Patient 3"}, {$set:{age:45}})
-db.mongoTest.updateOne({name:"Patient 3"}, {$set:{age:45, disease:"headache"}})
-db.mongoTest.find().forEach((patientData => {printjson(patiendData)}))
+Text > "Value"
+Boolean > True/False
 
-Part3
-db.mongoTest.find({age:{$gt:30}})
+Number:
+- int > 35
+- NumberLong(int64) > 1000000000
+- NumberDecimal> 15.95
+- ObjectId > "aaaaaa", it generates automatically by mongoDB, unique value
+- ISODate > ("YY-MM-DD")
+- Timestamp(19495911), is unique too
+- Embedded Document > {"a": {a:"a"}}
+- Array > {a: ["a", "a"]}
 
-Part4
+db.stats()
 
-db.mongoTest.deleteMany({"history.disease":"cold"})
-db.mongoTest.find().forEach((mongoTest => {printjson(mongoTest)}))
+
+
+Data schemas & Data Modelling
+- Define the fields  you'll need and relate
+- Defines your required collections
+- Define the queries you'll need
+- Optimize an easy fetching and writing
+
+Relations - Options
+- Nested/Embedded Documents >
+{
+    _id: ObjectId('6667f9b3360a05cc072162a9'),
+    name: 'Patient 5',
+    age: 22,
+    history: [ { disease: 'fever', treatment: 'False' } ]
+  } 
