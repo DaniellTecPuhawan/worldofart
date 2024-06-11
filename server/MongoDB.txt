@@ -1,5 +1,6 @@
 Create
 insertOne({})
+db.mongoTest.insertOne({name: "Patient 6", age: 31, history:[{ disease: "cold", treatment: "False"  }]})
 insertMany([{}, {}, {}])
 
 Read
@@ -7,6 +8,7 @@ db.{database}.find()
 db.{database}.find().pretty()
 findOne({value, options})
 db.database.findOne({name: "test"})
+db.mongoTest.find({age:{$gt:30}}) Greter than
 
 toArray, print as array
 db.database.find().toArray()
@@ -21,7 +23,7 @@ Update
 updateOne({value, options})
 db.database.updateOne({name: "test"}, {$set: {type: "testing"}}) Adds new value
 db.smashLegends.updateOne({_id: ObjectId('6666c57dcf56ee871f8093ac')}, {$set: {name: "tested"}})
-db.smashLegends.updateOne({_id: ObjectId('6620d1b834f2161e4d9a8017')}, {$set: {skills: ["hunting", "Hide"]}}) Sets an array
+db.smashLegends.updateOne({_id: ObjectId('6620d1b834f2161e4d9a8017')}, {$set: {skills: ["hunting", "marksman"]}}) Sets an array in a document > list of data/string
 
 updateMany({value, options}) Ads a value on every data
 db.smashLegends.updateMany({}, {$set: {Ranked:"Yes"}})
@@ -32,4 +34,15 @@ db.smashLegends.replaceOne({name:"test2"}, {name:"test", state:"to test"})
 Delete 
 deleteOne({name: "test"})
 deleteMany{value, options}
+db.mongoTest.deleteMany({"history.disease": "headache"})
+
+Can hold multiple collections > can hold multiple documents
+
+Document structure
+Each document needs a unique ID, gets one by default
+
+CRUD, CREATE, READ, UPDATE, Delete
+
+Retrieving data
+Using filters and operators
 

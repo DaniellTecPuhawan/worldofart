@@ -5,7 +5,7 @@ import { v4 } from "uuid";
 import { Modal, Button } from 'react-bootstrap';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFileUpload } from '@fortawesome/free-solid-svg-icons';
-import { LazyLoadImage } from "react-lazy-load-image-component";
+//import { LazyLoadImage } from "react-lazy-load-image-component";
 
 import '../css/styles.css';
 
