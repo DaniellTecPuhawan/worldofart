@@ -268,3 +268,21 @@ db.createCollection('posts', {
       }
     }
   });
+
+  dbpath & logpath
+
+  - dbpath: Especifica el directorio en el cual MongoDB almacena sus archivos de base de datos. 
+  Este directorio contiene todos los datos de tu base de datos MongoDB.
+  - logpath: Define el archivo donde MongoDB escribirá sus logs. 
+  Estos logs incluyen información sobre el estado del servidor, errores, y otra información operativa útil para la administración y solución de problemas.
+
+  mongod.cfg > All the configuration, is not necessary configuration via CMD
+
+Start MongoDB service
+  net start mongoDB
+
+Save logs > mongod -f (directory)
+
+Start mongoDB terminal > mongosh
+
+ Su función principal es permitir la importación de datos desde archivos JSON, CSV, TSV, o BSON a una base de datos MongoDB.
