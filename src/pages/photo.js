@@ -110,18 +110,14 @@ function ImageUpload(){
           </Button>
         </div>
       </div>
+      <br/>
       <div className="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-4">
         {imgUrl.map((data, index) => (
           <div className="col" key={index}>
-            <div className="card">
+            <div>
             <br/>
-              <img src={data.url} className="card-img-top img-fluid" loading="lazy" alt={`image_${index}`} onClick={() => handleShowModal(data.url, index)} style={{height: '200px'}} />
-              <div className="card-body d-flex justify-content-center align-items-center">
-                <div>
-                  <button className="btn btn-danger me-2" onClick={() => {setDeletingIndex(index); setShowDeleteModal(true);}}>Delete</button>
-                  <button className="btn btn-primary" onClick={() => handleEdit({ id: index, ref: data.ref })}>Edit</button>
-                </div>
-              </div>
+              <img src={data.url} className="card-img-top img-fluid" loading="lazy" alt={`image_${index}`} onClick={() => handleShowModal(data.url, index)} style={{height: '300px',}} />
+             
             </div>
           </div>
         ))}

@@ -2,8 +2,8 @@ import Layout from "./components/Layout";
 //import Footer from "./components/footer";
 
 import { Switch, Route } from "react-router-dom";
-import CookieConsent from "react-cookie-consent";
-import Swal from 'sweetalert2';
+//import CookieConsent from "react-cookie-consent";
+//import Swal from 'sweetalert2';
 import { Helmet } from 'react-helmet';
 
 import Home from "./pages/home";
@@ -11,16 +11,16 @@ import Paint from "./pages/paint";
 import Photo from "./pages/photo";
 import PaintRoot from "./pages/paintRoot";
 import PhotoRoot from "./pages/photoRoot";
-import Museum from "./pages/museum";
-import MuseumRoot from "./pages/museumRoot";
-import Login from './pages/login';
-import Register from './pages/register';
+//import Museum from "./pages/museum";
+//import MuseumRoot from "./pages/museumRoot";
+//import Login from './pages/login';
+//import Register from './pages/register';
 
-import Users from './pages/users';
+//import Users from './pages/users';
 
-import Cart from './pages/shoppingCart';
+//import Cart from './pages/shoppingCart';
 
-import Payment from './pages/payment';
+//import Payment from './pages/payment';
 
 function App() {
     return (
@@ -35,28 +35,24 @@ function App() {
   
         <Layout>
             <Switch>
-                <Route path="/" exact>
-                    <Home/>
-                </Route>
+               
                 <Route path="/paint">
                     <Paint/>
                 </Route>
                 <Route path="/photo">
                     <Photo/>
                 </Route>
+                {/*
+                 <Route path="/" exact>
+                    <Home/>
+                </Route>
                 <Route path="/museum">
                     <Museum/>
                 </Route>
-                <Route path="/paintRoot">
-                    <PaintRoot/>
-                </Route>
-                <Route path="/photoRoot">
-                    <PhotoRoot/>
-                </Route>
-                <Route path="/museumRoot">
+                 <Route path="/museumRoot">
                     <MuseumRoot/>
                 </Route>
-                <Route path="/login">
+                 <Route path="/login">
                     <Login/>
                 </Route>
                 <Route path="/register">
@@ -71,8 +67,16 @@ function App() {
                 <Route path="/payment">
                     <Payment/>
                 </Route>
+                */}
+                <Route path="/paintRoot">
+                    <PaintRoot/>
+                </Route>
+                <Route path="/photoRoot">
+                    <PhotoRoot/>
+                </Route>   
             </Switch>
             {/*<Footer/>*/}
+            {/*
             <CookieConsent 
                 debug={true}
                 location="bottom"
@@ -112,6 +116,7 @@ function App() {
                 >Esta web usa cookies para mejorar la experiencia de usuario.<br/>
                 <a href=""> Para saber más</a>
             </CookieConsent>
+            */}
           </Layout>
           </>
     );

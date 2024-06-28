@@ -3,14 +3,13 @@ require('dotenv').config()
 const express = require('express');
 const mongoose = require('mongoose');
 //const bodyParser = require('body-parser');
-const wofDataRoutes = require('./routes/wofDataRoute') //Routes
+const wofDataRoutes = require('./routes/wofDataRoute') //Routes 
 
 //express app
 
 const app = express ()
 const PORT = process.env.PORT || 8000;
 
-app.use(bodyParser.json());
 app.use(wofDataRoutes);
 
 //msg

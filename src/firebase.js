@@ -1,12 +1,11 @@
-// Import the functions you need from the SDKs you need
+
+
+// firebase.js
+
 import { initializeApp } from "firebase/app";
-import { getStorage } from "firebase/storage"
-import {getFirestore} from "firebase/firestore"
+import { getStorage } from "firebase/storage";
+import { getFirestore } from "firebase/firestore";
 
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyD22DFXDMTBTye5TEYAiremR4fWkfNyFrQ",
   authDomain: "world-of-art-app.firebaseapp.com",
@@ -16,9 +15,11 @@ const firebaseConfig = {
   appId: "1:379083289992:web:ecbc4519bbc5ce320df63d"
 };
 
-// Initialize Firebase
+// Inicializar Firebase
 const app = initializeApp(firebaseConfig);
-const ImageDb = getStorage(app)
-const UserDb = getStorage(app)
-export {ImageDb, UserDb}
 
+// Configurar el almacenamiento y Firestore
+const ImageDb = getStorage(app);
+const txtDB = getFirestore(app);
+
+export { ImageDb, txtDB };

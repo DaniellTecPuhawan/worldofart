@@ -52,9 +52,10 @@ const Header = () => {
     return (
         <header className={classes.header}>
             <div className={classes.header__content}>
-                <Link to="/" className={classes.header__content__logo}>
-                World Of Art
-                </Link>
+                
+                <div className={classes.header__content__logo}>
+                Art Cloud
+                </div>
                 <nav
                     className={`${classes.header__content__nav} ${
                         menuOpen && size.width < 768 ? classes.isMenu : ""
@@ -70,14 +71,15 @@ const Header = () => {
                         */}
                         <li>
                             <Link to="/paint" onClick={menuToggleHandler}>
-                                Pinturas
+                                Drawings
                             </Link>
                         </li>
                         <li>
                             <Link to="/photo" onClick={menuToggleHandler}>
-                                Fotografías
+                                Photographies
                             </Link>
                         </li>
+                        {/*
                         <li>
                             <Link to="/museum" onClick={menuToggleHandler}>
                                 Museos
@@ -93,6 +95,7 @@ const Header = () => {
                             <FaShoppingCart/>
                             </Link>
                         </li>              
+                        */}
                     </ul>
                     {/*<button onClick={ctaClickHandler}>Login</button> 
                     &nbsp;
